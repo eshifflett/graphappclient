@@ -1,2 +1,3 @@
 .venv
 src/graphappclient/devtesting.py
+src/graphappclient/__pycache__
