@@ -1,15 +1,14 @@
 from http import HTTPStatus
 import logging
-import requests
 import api_connector
 from typing import List, Optional, Union
-import user
-import utils
+from user import User
+from utils import APIBase
 
 # Logger
 logger = logging.getLogger(__name__)
 
-class GraphAppClient(utils.APIBase):
+class GraphAppClient(APIBase):
 
     _endpoints = {
         'get_users' : '/users',
@@ -55,7 +54,7 @@ class GraphAppClient(utils.APIBase):
 
         return self.graph_connector.authenticate()
     
-    def get_users(self) -> Union[List[user.User], None]:
+    def get_users(self) -> Union[List[User], None]:
         """
         Gets and returns a list of User objects in the Microsoft organization
 
@@ -79,7 +78,7 @@ class GraphAppClient(utils.APIBase):
         
         for user_json in user_json_list:
             # Creating new User object
-            new_user = user.User(
+            new_user = User(
                 self.graph_connector,
                 user_json['businessPhones'],
                 user_json['displayName'],
@@ -100,7 +99,7 @@ class GraphAppClient(utils.APIBase):
         return user_object_list
     
     def get_user(self, user_id: Optional[str] = None,
-                    user_principal_name: Optional[str] = None) -> Union[user.User, None]:
+                    user_principal_name: Optional[str] = None) -> Union[User, None]:
         """
         Gets user either via user ID or principal name. It will prioritize
         fetching via ID if both are provided.
@@ -142,7 +141,7 @@ class GraphAppClient(utils.APIBase):
             return None
         
         user_json = response.json()
-        new_user = user.User(
+        new_user = User(
             self.graph_connector,
             user_json['businessPhones'],
             user_json['displayName'],

@@ -1,7 +1,7 @@
 import logging
 from msal import ConfidentialClientApplication
 import requests
-import utils
+from utils import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_AUTH_URL)
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class APIConnector:
         # MSAL object for managing access tokens
         self.msal_app = ConfidentialClientApplication(
             client_id,
-            authority=f'{utils.LOGIN_AUTH_URL}{tenant_id}',
+            authority=f'{LOGIN_AUTH_URL}{tenant_id}',
             client_credential=client_secret
         )
 
@@ -56,29 +56,29 @@ class APIConnector:
             string representation of auth token to use
         """
         # First checking cache
-        res = self.msal_app.acquire_token_silent(utils.DEFAULT_SCOPE, None)
-        if res == None or utils.ERROR in res or utils.ACCESS_TOKEN not in res:
+        res = self.msal_app.acquire_token_silent(DEFAULT_SCOPE, None)
+        if res == None or ERROR in res or ACCESS_TOKEN not in res:
             logger.info('No token found in cache. Attempting to fetch from ' +
             'Microsoft API')
-            if res and utils.ERROR in res:
-                logger.error(res[utils.ERROR])
+            if res and ERROR in res:
+                logger.error(res[ERROR])
         else:
-            self._access_token = res[utils.ACCESS_TOKEN]
-            return res[utils.ACCESS_TOKEN]
+            self._access_token = res[ACCESS_TOKEN]
+            return res[ACCESS_TOKEN]
         
         # Fetching auth token from Microsoft
         res = self.msal_app.acquire_token_for_client(
-            scopes=utils.DEFAULT_SCOPE
+            scopes=DEFAULT_SCOPE
         )
         # Checking for success
-        if res == None or utils.ERROR in res or utils.ACCESS_TOKEN not in res:
+        if res == None or ERROR in res or ACCESS_TOKEN not in res:
             logger.error('An error occurred when fetching the access token from'
             + ' Microsoft.')
-            if res and utils.ERROR in res:
-                logger.error(res[utils.ERROR])
+            if res and ERROR in res:
+                logger.error(res[ERROR])
         else:
-            self._access_token = res[utils.ACCESS_TOKEN]
-            return res[utils.ACCESS_TOKEN]
+            self._access_token = res[ACCESS_TOKEN]
+            return res[ACCESS_TOKEN]
         
         return None # No token found
     

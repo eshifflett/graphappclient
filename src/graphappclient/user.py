@@ -1,8 +1,8 @@
 import api_connector
 from typing import List
-import utils
+from utils import APIBase
 
-class User(utils.APIBase):
+class User(APIBase):
     """
     Class representing a user object for Microsoft. More info found here:
     https://docs.microsoft.com/en-us/graph/api/resources/user
