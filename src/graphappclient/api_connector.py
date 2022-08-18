@@ -1,7 +1,7 @@
 import logging
 from msal import ConfidentialClientApplication
 import requests
-from utils import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_AUTH_URL)
+from constants import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_AUTH_URL)
 
 # Logger
 logger = logging.getLogger(__name__)
