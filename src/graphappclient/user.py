@@ -1,6 +1,6 @@
-import api_connector
+from graphappclient.utils import APIBase
+from graphappclient.api_connector import APIConnector
 from typing import List
-from utils import APIBase
 
 class User(APIBase):
     """
@@ -10,7 +10,7 @@ class User(APIBase):
 
     def __init__(
         self,
-        api_connector: api_connector.APIConnector,
+        api_connector: APIConnector,
         business_phones: List[str],
         display_name: str,
         given_name: str,

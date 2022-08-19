@@ -1,9 +1,9 @@
+from graphappclient.api_connector import APIConnector
+from graphappclient.user import User
+from graphappclient.utils import APIBase
 from http import HTTPStatus
 import logging
-import api_connector
 from typing import List, Optional, Union
-from user import User
-from utils import APIBase
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class GraphAppClient(APIBase):
         super().__init__()
 
         # Creating new connector object with auth information
-        self.graph_connector = api_connector.APIConnector(
+        self.graph_connector = APIConnector(
             client_id,
             tenant_id,
             client_secret
