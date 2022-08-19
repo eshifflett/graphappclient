@@ -8,6 +8,19 @@ API_VERSION = 'v1.0'
 # Default scope required for application permissions
 DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 
-# Dict keys
+# Misc dict keys
 ERROR = 'error'
 ACCESS_TOKEN = 'access_token'
+
+# Default User dict keys
+BUSINESS_PHONES = 'businessPhones'
+DISPLAY_NAME = 'displayName'
+GIVEN_NAME = 'givenName'
+JOB_TITLE = 'jobTitle'
+MAIL = 'mail'
+MOBILE_PHONE = 'mobilePhone'
+OFFICE_LOCATION = 'officeLocation'
+PREFERRED_LANGUAGE = 'preferredLanguage'
+SURNAME = 'surname'
+USER_PRINCIPAL_NAME = 'userPrincipalName'
+ID = 'id'
