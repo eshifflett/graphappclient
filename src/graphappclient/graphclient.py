@@ -1,4 +1,7 @@
 from graphappclient.api_connector import APIConnector
+from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
+                                    JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
+                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME)
 from graphappclient.user import User
 from graphappclient.utils import APIBase
 from http import HTTPStatus
@@ -80,17 +83,17 @@ class GraphAppClient(APIBase):
             # Creating new User object
             new_user = User(
                 self.graph_connector,
-                user_json['businessPhones'],
-                user_json['displayName'],
-                user_json['givenName'],
-                user_json['jobTitle'],
-                user_json['mail'],
-                user_json['mobilePhone'],
-                user_json['officeLocation'],
-                user_json['preferredLanguage'],
-                user_json['surname'],
-                user_json['userPrincipalName'],
-                user_json['id']
+                user_json[BUSINESS_PHONES],
+                user_json[DISPLAY_NAME],
+                user_json[GIVEN_NAME],
+                user_json[JOB_TITLE],
+                user_json[MAIL],
+                user_json[MOBILE_PHONE],
+                user_json[OFFICE_LOCATION],
+                user_json[PREFERRED_LANGUAGE],
+                user_json[SURNAME],
+                user_json[USER_PRINCIPAL_NAME],
+                user_json[ID]
             )
 
             # Adding to User list to return
@@ -143,17 +146,17 @@ class GraphAppClient(APIBase):
         user_json = response.json()
         new_user = User(
             self.graph_connector,
-            user_json['businessPhones'],
-            user_json['displayName'],
-            user_json['givenName'],
-            user_json['jobTitle'],
-            user_json['mail'],
-            user_json['mobilePhone'],
-            user_json['officeLocation'],
-            user_json['preferredLanguage'],
-            user_json['surname'],
-            user_json['userPrincipalName'],
-            user_json['id']
+            user_json[BUSINESS_PHONES],
+            user_json[DISPLAY_NAME],
+            user_json[GIVEN_NAME],
+            user_json[JOB_TITLE],
+            user_json[MAIL],
+            user_json[MOBILE_PHONE],
+            user_json[OFFICE_LOCATION],
+            user_json[PREFERRED_LANGUAGE],
+            user_json[SURNAME],
+            user_json[USER_PRINCIPAL_NAME],
+            user_json[ID]
         )
         
         return new_user
