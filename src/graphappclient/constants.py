@@ -11,6 +11,7 @@ DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 # Misc dict keys
 ERROR = 'error'
 ACCESS_TOKEN = 'access_token'
+VALUE = 'value'
 
 # Default User dict keys
 BUSINESS_PHONES = 'businessPhones'
