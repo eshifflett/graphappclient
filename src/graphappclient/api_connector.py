@@ -1,7 +1,7 @@
+from graphappclient.constants import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_AUTH_URL)
 import logging
 from msal import ConfidentialClientApplication
 import requests
-from constants import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_AUTH_URL)
 
 # Logger
 logger = logging.getLogger(__name__)

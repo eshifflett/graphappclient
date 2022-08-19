@@ -1,4 +1,4 @@
-from constants import (API_VERSION, GRAPH_BASE_URL)
+from graphappclient.constants import (API_VERSION, GRAPH_BASE_URL)
 
 class APIBase:
     """
