@@ -15,7 +15,7 @@ class User(APIBase):
     def __init__(self, api_connector: APIConnector, user_json: dict):
         """
         """
-        self.api_connector = api_connector
+        self.graph_connector = api_connector
         self.business_phones = user_json.get(BUSINESS_PHONES)
         self.display_name = user_json.get(DISPLAY_NAME)
         self.given_name = user_json.get(GIVEN_NAME)

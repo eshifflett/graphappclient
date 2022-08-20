@@ -12,6 +12,7 @@ DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 ERROR = 'error'
 ACCESS_TOKEN = 'access_token'
 VALUE = 'value'
+NEXT_ODATA = '@odata.nextLink'
 
 # Default User dict keys
 BUSINESS_PHONES = 'businessPhones'

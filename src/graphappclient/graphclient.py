@@ -2,9 +2,9 @@ from graphappclient.api_connector import APIConnector
 from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
                                     JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
                                     PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
-                                    VALUE)
+                                    VALUE, NEXT_ODATA)
 from graphappclient.user import User
-from graphappclient.utils import APIBase
+from graphappclient.utils import APIBase, Paginator
 from http import HTTPStatus
 import logging
 from typing import List, Optional, Union
@@ -63,7 +63,7 @@ class GraphAppClient(APIBase):
 
         return self.graph_connector.authenticate()
     
-    def get_users(self) -> Union[List[User], None]:
+    def get_users(self, page_size: int = None, limit: int = None) -> Union[List[User], Paginator, None]:
         """
         Gets and returns a list of User objects in the Microsoft organization
 
@@ -74,6 +74,10 @@ class GraphAppClient(APIBase):
         # Get endpoint URL
         graph_api_url = self.build_url(self._endpoints[self.GET_USERS])
 
+        # Checking for page size request
+        if page_size != None:
+            graph_api_url = f'{graph_api_url}?$top={page_size.__str__()}'
+
         # Make API call
         response = self.graph_connector.get(graph_api_url)
 
@@ -82,17 +86,30 @@ class GraphAppClient(APIBase):
             logger.error(response.content)
             return None
         
-        user_json_list = response.json()[VALUE]
+        response_data = response.json()
+
+        # Gets list of User JSON's
+        user_json_list = response_data.get(VALUE)
+
         user_object_list = []
-        
         for user_json in user_json_list:
             # Creating new User object
             new_user = User(self.graph_connector, user_json)
 
             # Adding to User list to return
             user_object_list.append(new_user)
-        
-        return user_object_list
+
+        if len(user_object_list) < page_size:
+            return user_object_list
+        else: # time for pagination
+            user_paginator = Paginator(
+                self.graph_connector,
+                user_object_list,
+                response_data.get(NEXT_ODATA),
+                User,
+                limit=limit
+            )
+            return user_paginator
     
     def get_user(self, user_id: Optional[str] = None,
                     user_principal_name: Optional[str] = None) -> Union[User, None]:
