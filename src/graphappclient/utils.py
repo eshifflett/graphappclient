@@ -64,7 +64,7 @@ class Paginator(APIBase):
         api_connector: APIConnector,
         data: List,
         next_page_url: str,
-        constructor: Any = None,
+        constructor: Any,
         limit: int = None
     ):
         """
@@ -73,7 +73,7 @@ class Paginator(APIBase):
         a list
         """
         self.graph_connector = api_connector
-        self.data = data
+        self.page = data
         self.idx = 0
         self.next_page_url = next_page_url
         self.constructor = constructor
@@ -90,7 +90,7 @@ class Paginator(APIBase):
     def __next__(self):
         # Checking if we can just index data
         if self.idx < self.curr_data_count:
-            val = self.data[self.idx]
+            val = self.page[self.idx]
             self.idx += 1
             return val
         elif self.limit and self.limit <= self.total_data_count:
@@ -114,29 +114,72 @@ class Paginator(APIBase):
         self.next_page_url = response_data.get(NEXT_ODATA, None)
 
         # Get list of JSON's to be deserialized
-        returned_list = response.get(VALUE, [])
+        returned_list = response_data.get(VALUE, [])
 
         # Check for callable constructor
-        if callable(self.constructor) and not isinstance(self.constructor, type):
-            self.data = []
+        if callable(self.constructor):
+            self.page = []
             for item in returned_list:
-                self.data.append(self.constructor(self.graph_connector, item))
+                self.page.append(self.constructor(self.graph_connector, item))
         else:
             raise StopIteration()
         
-        returned_list_count = len(self.data)
-        if self.limit and self.limit < len(self.data) + self.total_data_count: # received more than limit 
+        returned_list_count = len(self.page)
+        if self.limit and self.limit < len(self.page) + self.total_data_count: # received more than limit 
             self.next_page_url = None
-            self.curr_data_count = len(self.data) + self.total_data_count - self.limit
+            self.curr_data_count = len(self.page) + self.total_data_count - self.limit
             self.total_data_count += self.curr_data_count
             returned_list_count = self.curr_data_count
-        if returned_list_count > 0:
+        
+        if returned_list_count > 0: # cleanup and returning value
             self.curr_data_count = returned_list_count
             self.total_data_count += returned_list_count
             self.idx = 0
-            val = self.data[self.idx]
-            val += 1
+            val = self.page[self.idx]
+            self.idx += 1
             return val
         else:
             raise StopIteration()
+    
+    def next_page(self) -> bool:
+        if self.next_page_url == None: # No more pages to get
+            return False
         
+        # Fetching next page
+        response = self.graph_connector.get(self.next_page_url)
+        if not response.status_code == HTTPStatus.OK: # Checking for 200
+            logger.error('Error when getting next page from Graph API')
+            logger.error(response.content)
+            raise StopIteration()
+        
+        # Get JSON
+        response_data = response.json()
+
+        # Check for next page URL
+        self.next_page_url = response_data.get(NEXT_ODATA, None)
+
+        # Get list of JSON's to be deserialized
+        returned_list = response_data.get(VALUE, [])
+
+        # Check for callable constructor
+        if callable(self.constructor):
+            self.page = []
+            for item in returned_list:
+                self.page.append(self.constructor(self.graph_connector, item))
+        else:
+            return False
+        
+        returned_list_count = len(self.page)
+        if self.limit and self.limit < len(self.page) + self.total_data_count: # received more than limit 
+            self.next_page_url = None
+            self.curr_data_count = len(self.page) + self.total_data_count - self.limit
+            self.total_data_count += self.curr_data_count
+            returned_list_count = self.curr_data_count
+        
+        if returned_list_count > 0: # cleanup and returning value
+            self.curr_data_count = returned_list_count
+            self.total_data_count += returned_list_count
+            self.idx = 0
+            return True
+        else:
+            return False
