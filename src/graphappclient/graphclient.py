@@ -87,20 +87,7 @@ class GraphAppClient(APIBase):
         
         for user_json in user_json_list:
             # Creating new User object
-            new_user = User(
-                self.graph_connector,
-                user_json.get(BUSINESS_PHONES),
-                user_json.get(DISPLAY_NAME),
-                user_json.get(GIVEN_NAME),
-                user_json.get(JOB_TITLE),
-                user_json.get(MAIL),
-                user_json.get(MOBILE_PHONE),
-                user_json.get(OFFICE_LOCATION),
-                user_json.get(PREFERRED_LANGUAGE),
-                user_json.get(SURNAME),
-                user_json.get(USER_PRINCIPAL_NAME),
-                user_json.get(ID)
-            )
+            new_user = User(self.graph_connector, user_json)
 
             # Adding to User list to return
             user_object_list.append(new_user)
@@ -150,20 +137,7 @@ class GraphAppClient(APIBase):
             return None
         
         user_json = response.json()
-        new_user = User(
-            self.graph_connector,
-            user_json.get(BUSINESS_PHONES),
-            user_json.get(DISPLAY_NAME),
-            user_json.get(GIVEN_NAME),
-            user_json.get(JOB_TITLE),
-            user_json.get(MAIL),
-            user_json.get(MOBILE_PHONE),
-            user_json.get(OFFICE_LOCATION),
-            user_json.get(PREFERRED_LANGUAGE),
-            user_json.get(SURNAME),
-            user_json.get(USER_PRINCIPAL_NAME),
-            user_json.get(ID)
-        )
+        new_user = User(self.graph_connector, user_json)
         
         return new_user
     
@@ -220,19 +194,6 @@ class GraphAppClient(APIBase):
             return None
         
         user_json = response.json()
-        new_user = User(
-            self.graph_connector,
-            user_json.get(BUSINESS_PHONES),
-            user_json.get(DISPLAY_NAME),
-            user_json.get(GIVEN_NAME),
-            user_json.get(JOB_TITLE),
-            user_json.get(MAIL),
-            user_json.get(MOBILE_PHONE),
-            user_json.get(OFFICE_LOCATION),
-            user_json.get(PREFERRED_LANGUAGE),
-            user_json.get(SURNAME),
-            user_json.get(USER_PRINCIPAL_NAME),
-            user_json.get(ID)
-        )
+        new_user = User(self.graph_connector, user_json)
         
         return new_user
