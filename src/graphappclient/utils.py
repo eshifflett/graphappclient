@@ -1,4 +1,12 @@
-from graphappclient.constants import (API_VERSION, GRAPH_BASE_URL)
+from graphappclient.api_connector import APIConnector
+from graphappclient.constants import (API_VERSION, GRAPH_BASE_URL, NEXT_ODATA,
+                                    VALUE)
+from http import HTTPStatus
+import logging
+from typing import Any, List
+
+# Logger
+logger = logging.getLogger(__name__)
 
 class APIBase:
     """
@@ -47,3 +55,88 @@ class APIBase:
             String representation of the url for API call
         """
         return f'{self.base_url}{endpoint}'
+
+
+class Paginator(APIBase):
+    """"""
+    def __init__(
+        self,
+        api_connector: APIConnector,
+        data: List,
+        next_page_url: str,
+        constructor: Any = None,
+        limit: int = None
+    ):
+        """
+        Initializes Paginator object. This is a data structure that supports
+        iteration, and will automatically fetch each page if iterated over like
+        a list
+        """
+        self.graph_connector = api_connector
+        self.data = data
+        self.idx = 0
+        self.next_page_url = next_page_url
+        self.constructor = constructor
+        self.limit = limit
+
+        if limit and limit < len(data): # received more than limit
+            self.curr_data_count = self.total_data_count = limit
+        else:
+            self.curr_data_count = self.total_data_count = len(data)
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        # Checking if we can just index data
+        if self.idx < self.curr_data_count:
+            val = self.data[self.idx]
+            self.idx += 1
+            return val
+        elif self.limit and self.limit <= self.total_data_count:
+            raise StopIteration()
+        
+        # Checking if there's more data to fetch
+        if self.next_page_url == None:
+            raise StopIteration()
+        
+        # Fetching next page
+        response = self.graph_connector.get(self.next_page_url)
+        if not response.status_code == HTTPStatus.OK: # Checking for 200
+            logger.error('Error when getting next page from Graph API')
+            logger.error(response.content)
+            raise StopIteration()
+        
+        # Get JSON
+        response_data = response.json()
+
+        # Check for next page URL
+        self.next_page_url = response_data.get(NEXT_ODATA, None)
+
+        # Get list of JSON's to be deserialized
+        returned_list = response.get(VALUE, [])
+
+        # Check for callable constructor
+        if callable(self.constructor) and not isinstance(self.constructor, type):
+            self.data = []
+            for item in returned_list:
+                self.data.append(self.constructor(self.graph_connector, item))
+        else:
+            raise StopIteration()
+        
+        returned_list_count = len(self.data)
+        if self.limit and self.limit < len(self.data) + self.total_data_count: # received more than limit 
+            self.next_page_url = None
+            self.curr_data_count = len(self.data) + self.total_data_count - self.limit
+            self.total_data_count += self.curr_data_count
+            returned_list_count = self.curr_data_count
+        if returned_list_count > 0:
+            self.curr_data_count = returned_list_count
+            self.total_data_count += returned_list_count
+            self.idx = 0
+            val = self.data[self.idx]
+            val += 1
+            return val
+        else:
+            raise StopIteration()
+        
