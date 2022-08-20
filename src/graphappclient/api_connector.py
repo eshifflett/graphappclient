@@ -2,6 +2,7 @@ from graphappclient.constants import (ACCESS_TOKEN, DEFAULT_SCOPE, ERROR, LOGIN_
 import logging
 from msal import ConfidentialClientApplication
 import requests
+from requests import Response
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ class APIConnector:
         
         return None # No token found
     
-    def _get_headers(self):
+    def _get_headers(self) -> dict:
         """
         Creates and returns headers JSON object to be sent with HTTP requests
         for authentication with Microsoft.
@@ -96,7 +97,7 @@ class APIConnector:
         headers = {'Authorization': 'Bearer ' + token}
         return headers
     
-    def get(self, url):
+    def get(self, url: str) -> Response:
         """
         Used for making GET API calls to MS Graph
 
@@ -108,3 +109,18 @@ class APIConnector:
         headers = self._get_headers()
 
         return requests.get(url, headers=headers)
+    
+    def post(self, url: str, json: dict=None) -> Response:
+        """
+        Used for making POST API calls to MS Graph
+
+        Parameters
+        url : str
+            URL endpoint to GET from
+        data : Union[dict, None]
+            JSON to be sent in POST
+        """
+        # Get auth token for call
+        headers = self._get_headers()
+
+        return requests.post(url, json=json, headers=headers)

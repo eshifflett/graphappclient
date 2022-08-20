@@ -1,7 +1,8 @@
 from graphappclient.api_connector import APIConnector
 from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
                                     JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
-                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME)
+                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
+                                    VALUE)
 from graphappclient.user import User
 from graphappclient.utils import APIBase
 from http import HTTPStatus
@@ -13,9 +14,14 @@ logger = logging.getLogger(__name__)
 
 class GraphAppClient(APIBase):
 
+    GET_USERS = 'get_users'
+    GET_USER = 'get_user'
+    CREATE_USER = 'create_user'
+
     _endpoints = {
-        'get_users' : '/users',
-        'get_user' : '/users/{id}'
+        GET_USERS : '/users',
+        GET_USER : '/users/{id}',
+        CREATE_USER : '/users'
     }
 
     def __init__(self, client_id: str, tenant_id: str, client_secret: str):
@@ -66,35 +72,22 @@ class GraphAppClient(APIBase):
             A list of User objects if found, otherwise None
         """
         # Get endpoint URL
-        graph_api_url = self.build_url(self._endpoints['get_users'])
+        graph_api_url = self.build_url(self._endpoints[self.GET_USERS])
 
         # Make API call
         response = self.graph_connector.get(graph_api_url)
 
         if not response.status_code == HTTPStatus.OK: # Checking for 200
             logger.error('Error when getting users from Graph API')
-            logger.error(response.reason)
+            logger.error(response.content)
             return None
         
-        user_json_list = response.json()['value']
+        user_json_list = response.json()[VALUE]
         user_object_list = []
         
         for user_json in user_json_list:
             # Creating new User object
-            new_user = User(
-                self.graph_connector,
-                user_json[BUSINESS_PHONES],
-                user_json[DISPLAY_NAME],
-                user_json[GIVEN_NAME],
-                user_json[JOB_TITLE],
-                user_json[MAIL],
-                user_json[MOBILE_PHONE],
-                user_json[OFFICE_LOCATION],
-                user_json[PREFERRED_LANGUAGE],
-                user_json[SURNAME],
-                user_json[USER_PRINCIPAL_NAME],
-                user_json[ID]
-            )
+            new_user = User(self.graph_connector, user_json)
 
             # Adding to User list to return
             user_object_list.append(new_user)
@@ -126,11 +119,11 @@ class GraphAppClient(APIBase):
 
         if user_id:
             # Build endpoint and URL
-            user_fetch_endpoint = self._endpoints['get_user'].format(id=user_id)
+            user_fetch_endpoint = self._endpoints[self.GET_USER].format(id=user_id)
             graph_api_url = self.build_url(user_fetch_endpoint)
         elif user_principal_name:
             # Build endpoint and URL
-            user_fetch_endpoint = self._endpoints['get_user'].format(id=user_principal_name)
+            user_fetch_endpoint = self._endpoints[self.GET_USER].format(id=user_principal_name)
             graph_api_url = self.build_url(user_fetch_endpoint)
         else:
             raise ValueError('Either a user_id or a user_principal_name must'
@@ -140,23 +133,67 @@ class GraphAppClient(APIBase):
         response = self.graph_connector.get(graph_api_url)
         if not response.status_code == HTTPStatus.OK: # Checking for 200
             logger.error('Error when getting user from Graph API')
-            logger.error(response.reason)
+            logger.error(response.content)
             return None
         
         user_json = response.json()
-        new_user = User(
-            self.graph_connector,
-            user_json[BUSINESS_PHONES],
-            user_json[DISPLAY_NAME],
-            user_json[GIVEN_NAME],
-            user_json[JOB_TITLE],
-            user_json[MAIL],
-            user_json[MOBILE_PHONE],
-            user_json[OFFICE_LOCATION],
-            user_json[PREFERRED_LANGUAGE],
-            user_json[SURNAME],
-            user_json[USER_PRINCIPAL_NAME],
-            user_json[ID]
-        )
+        new_user = User(self.graph_connector, user_json)
+        
+        return new_user
+    
+    def create_user(self, user_data: dict) -> Union[User, None]:
+        """
+        Creates a user in the Microsoft organization
+
+        Parameters
+        user_data : dict
+            dictionary representing user data to be POST'd to Microsoft. The
+            required fields can be found in the example below
+        
+        Returns
+        Union[User, None]
+            Returns a User object representing the new User created, or None if
+            the User could not be created
+        
+        Raises
+        ValueError
+            Raises if required fields aren't all present in user_data
+        
+        Usage
+        example dictionary with required fields:
+        {
+            "accountEnabled": true,
+            "displayName": "Adele Vance",
+            "mailNickname": "AdeleV",
+            "userPrincipalName": "AdeleV@contoso.onmicrosoft.com",
+            "passwordProfile" : {
+                "forceChangePasswordNextSignIn": true,
+                "password": "xWwvJ]6NMw+bWH-d"
+            }
+        }
+        Additional information can be found in the Graph API docs for Users
+        and Create User, as well as our documentation
+        """
+
+        # Checking if required data is in provided JSON for POST
+        required_keys = ['accountEnabled', 'displayName', 'mailNickname',
+                        'userPrincipalName', 'passwordProfile']
+        for key in required_keys:
+            if key not in user_data:
+                raise ValueError(f'Key "{key}" is required and was not provided'
+                                + ' in the user_data parameter')
+        
+        # Build URL for HTTP request
+        graph_api_url = self.build_url(self._endpoints[self.CREATE_USER])
+
+        # Make POST request
+        response = self.graph_connector.post(graph_api_url, user_data)
+        if not response.status_code == HTTPStatus.CREATED: # Checking for 201
+            logger.error('Error when creating user in Graph API')
+            logger.error(response.content)
+            return None
+        
+        user_json = response.json()
+        new_user = User(self.graph_connector, user_json)
         
         return new_user
