@@ -3,7 +3,7 @@ This library aims to provide simple, easy to understand support for interaction 
 
 This project is primarily developed and maintained by [eshifflett](https://github.com/eshifflett).
 
-### Quick Code Example:
+## Quick Code Example:
 ```python
 from graphappclient.graphclient import GraphAppClient
 
@@ -47,3 +47,15 @@ This will get an individual `User` object, either from a provided `user_id` or `
 GraphAppClient.create_user(self, user_data: dict) -> Union[User, None]
 ```
 This is used to create a User in the Microsoft organization, and returns a `User` object representing the newly created User. The user is created from information provided in the `user_data` dictionary, which should match the [JSON representation of User objects in the Graph API documentation](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=http#request-body).
+
+#### Edit/Update Users
+```python
+User.update_user(self, updates: Optional[dict] = None, include_attributes: Optional[bool] = False) -> bool
+```
+Used to edit fields of the User object in Microsoft. There are two ways of specifying the updates to the organization. First, a [dictionary representing a JSON object of User key/values](https://docs.microsoft.com/en-us/graph/api/user-update?view=graph-rest-1.0&tabs=http#request-body) can be provided as the `updates` parameter. Any updates passed this way are also added to the `user_json` field of the `User` object after `update_user()` is called. Second, any of the attributes of the `User` object can be edited like normal class attributes, and will be included in the update if the `include_attributes` parameter is set to `True`. It will return a `bool` value indicating whether or not the update was successful.
+
+#### Delete Users
+```python
+User.delete_user(self) -> bool
+```
+Finally, this function is used to delete Users from their Microsoft organization. It returns a `bool` indicating whether or not the deletion operation was successful. It should be noted that after this is executed, other functioniality of this `User` object is (obviously) lost. 
