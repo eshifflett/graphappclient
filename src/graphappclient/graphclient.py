@@ -91,6 +91,12 @@ class GraphAppClient(APIBase):
         # Gets list of User JSON's
         user_json_list = response_data.get(VALUE)
 
+        # Checking limit
+        limit_reached = False
+        if len(user_json_list) > limit:
+            user_json_list = user_json_list[:limit]
+            limit_reached = True
+
         user_object_list = []
         for user_json in user_json_list:
             # Creating new User object
@@ -98,8 +104,8 @@ class GraphAppClient(APIBase):
 
             # Adding to User list to return
             user_object_list.append(new_user)
-
-        if len(user_object_list) < page_size:
+        
+        if NEXT_ODATA not in response_data or limit_reached:
             return user_object_list
         else: # time for pagination
             user_paginator = Paginator(
