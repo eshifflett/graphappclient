@@ -46,7 +46,7 @@ class User(APIBase):
     def __repr__(self):
         return f'User {self.user_principal_name} with ID {self.id}'
     
-    def delete_account(self) -> bool:
+    def delete_user(self) -> bool:
         # Build endpoint and URL
         user_fetch_endpoint = self._endpoints[self.DELETE_USER].format(id=self.id)
         graph_api_url = self.build_url(user_fetch_endpoint)
