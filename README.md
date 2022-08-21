@@ -59,3 +59,10 @@ Used to edit fields of the User object in Microsoft. There are two ways of speci
 User.delete_user(self) -> bool
 ```
 Finally, this function is used to delete Users from their Microsoft organization. It returns a `bool` indicating whether or not the deletion operation was successful. It should be noted that after this is executed, other functioniality of this `User` object is (obviously) lost. 
+
+## Other Library Infrastructure
+### Paginator
+The `Paginator` class is a custom data structure that is used for storying results of queries that return more than one page of data. Various functions in this library have `page_size` parameters, and the Graph API also has some default page size maximums for some of their queries. This data structure is iterable and will continuously request data as the previous page runs out until no more data is sent from Microsoft. In addition to iterating over the whole collection, you can also access the `page` attribute of the object itself to just get the current page as a `List`, and call `Paginator.next_page()` to receive the next page of data from Microsoft.
+#### Code Example
+```python
+```
