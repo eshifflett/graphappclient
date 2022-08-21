@@ -26,3 +26,14 @@ selected_user.update_user(updates=updates, include_attributes=True)
 # Delete user
 selected_user.delete_user()
 ```
+
+## Graph API Components
+### Users
+Users are accessed and interacted with via the `GraphAppClient` and `User` classes.
+#### Get Users
+```python
+GraphAppClient.get_users(self, page_size: int = None, limit: int = None) -> Union[List[User], Paginator, None]
+```
+
+Gets a collection of `User` objects. Users can specify a `page_size` to request specifically sized batches of responses, and a `limit` to set a cap on the number of objects returned. If a `page_size` is supplied and there is a greater amount of data returned, the function will return a `Pagination` object as opposed to a `List[User]`. `Pagination` is a custom data structure that supports iteration and requests the data in batches of size `page_size`, more can be read in our documentation on the structure.
+
