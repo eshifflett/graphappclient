@@ -124,3 +124,33 @@ class APIConnector:
         headers = self._get_headers()
 
         return requests.post(url, json=json, headers=headers)
+    
+    def delete(self, url: str, json: dict=None) -> Response:
+        """
+        Used for making delete API calls to MS Graph
+
+        Parameters
+        url : str
+            URL endpoint to GET from
+        data : Union[dict, None]
+            JSON to be sent in call
+        """
+        # Get auth token for call
+        headers = self._get_headers()
+
+        return requests.delete(url, json=json, headers=headers)
+
+    def patch(self, url: str, json: dict=None) -> Response:
+        """
+        Used for making PATCH API calls to MS Graph
+
+        Parameters
+        url : str
+            URL endpoint to GET from
+        data : Union[dict, None]
+            JSON to be sent in call
+        """
+        # Get auth token for call
+        headers = self._get_headers()
+
+        return requests.patch(url, json=json, headers=headers)
