@@ -35,5 +35,15 @@ Users are accessed and interacted with via the `GraphAppClient` and `User` class
 GraphAppClient.get_users(self, page_size: int = None, limit: int = None) -> Union[List[User], Paginator, None]
 ```
 
-Gets a collection of `User` objects. Users can specify a `page_size` to request specifically sized batches of responses, and a `limit` to set a cap on the number of objects returned. If a `page_size` is supplied and there is a greater amount of data returned, the function will return a `Pagination` object as opposed to a `List[User]`. `Pagination` is a custom data structure that supports iteration and requests the data in batches of size `page_size`, more can be read in our documentation on the structure.
+Gets a collection of `User` objects. Users can specify a `page_size` to request specifically sized batches of responses, and a `limit` to set a cap on the number of objects returned. If a `page_size` is supplied and there is a greater amount of data returned, the function will return a `Pagination` object as opposed to a `List[User]`. `Pagination` is a custom data structure that supports iteration and requests the data in batches. Some requests have default maximum page sizes in the Graph API as well, more can be read in our documentation on the structure.
 
+```python
+GraphAppClient.get_user(self, user_id: Optional[str] = None, user_principal_name: Optional[str] = None) -> Union[User, None]
+```
+This will get an individual `User` object, either from a provided `user_id` or `user_principal_name`. It will prioritize fetching from the `user_id` parameter over the `user_principal_name`, only one should be provided. In practice, the `user_principal_name` will probably be used most (it is equivalent to the user's login name, such as 'AdeleV@contoso.onmicrosoft.com'.
+
+#### Create Users
+```python
+GraphAppClient.create_user(self, user_data: dict) -> Union[User, None]
+```
+This is used to create a User in the Microsoft organization, and returns a `User` object representing the newly created User. The user is created from information provided in the `user_data` dictionary, which should match the [JSON representation of User objects in the Graph API documentation](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=http#request-body).
