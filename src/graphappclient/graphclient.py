@@ -17,13 +17,11 @@ class GraphAppClient(APIBase):
     GET_USERS = 'get_users'
     GET_USER = 'get_user'
     CREATE_USER = 'create_user'
-    DELETE_USER = 'delete_user'
 
     _endpoints = {
         GET_USERS : '/users',
         GET_USER : '/users/{id}',
-        CREATE_USER : '/users',
-        DELETE_USER : '/users/{id}'
+        CREATE_USER : '/users'
     }
 
     def __init__(self, client_id: str, tenant_id: str, client_secret: str):
