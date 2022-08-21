@@ -4,7 +4,12 @@ from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME,
                                     PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
                                     VALUE)
 from graphappclient.utils import APIBase
+from http import HTTPStatus
+import logging
 from typing import List
+
+# Logger
+logger = logging.getLogger(__name__)
 
 class User(APIBase):
     """
@@ -12,9 +17,19 @@ class User(APIBase):
     https://docs.microsoft.com/en-us/graph/api/resources/user
     """
 
+    DELETE_USER = 'delete_user'
+
+    _endpoints = {
+        DELETE_USER : '/users/{id}'
+    }
+
     def __init__(self, api_connector: APIConnector, user_json: dict):
         """
         """
+
+        # Super class constructor
+        super().__init__()
+
         self.graph_connector = api_connector
         self.business_phones = user_json.get(BUSINESS_PHONES)
         self.display_name = user_json.get(DISPLAY_NAME)
@@ -30,3 +45,17 @@ class User(APIBase):
     
     def __repr__(self):
         return f'User {self.user_principal_name} with ID {self.id}'
+    
+    def delete_account(self) -> bool:
+        # Build endpoint and URL
+        user_fetch_endpoint = self._endpoints[self.DELETE_USER].format(id=self.id)
+        graph_api_url = self.build_url(user_fetch_endpoint)
+
+        # Make API call
+        response = self.graph_connector.delete(graph_api_url)
+        if not response.status_code == HTTPStatus.NO_CONTENT: # Checking for 200
+            logger.error('Error when getting user from Graph API')
+            logger.error(response.content)
+            return False
+        
+        return True

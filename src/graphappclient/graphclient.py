@@ -17,11 +17,13 @@ class GraphAppClient(APIBase):
     GET_USERS = 'get_users'
     GET_USER = 'get_user'
     CREATE_USER = 'create_user'
+    DELETE_USER = 'delete_user'
 
     _endpoints = {
         GET_USERS : '/users',
         GET_USER : '/users/{id}',
-        CREATE_USER : '/users'
+        CREATE_USER : '/users',
+        DELETE_USER : '/users/{id}'
     }
 
     def __init__(self, client_id: str, tenant_id: str, client_secret: str):
@@ -214,3 +216,35 @@ class GraphAppClient(APIBase):
         new_user = User(self.graph_connector, user_json)
         
         return new_user
+
+    def delete_user(
+        self,
+        user_object: Optional[User] = None,
+        user_id: Optional[str] = None,
+        user_principal_name: Optional[str] = None
+    ) -> bool:
+        """"""
+        if not (user_object or user_id or user_principal_name):
+            raise ValueError('Must provide either user_object, user_id, or'
+            + ' user_principal_name of user to delete')
+        
+        if user_object:
+            # Build endpoint and URL
+            return user_object.delete_account()
+        elif user_id:
+            # Build endpoint and URL
+            user_fetch_endpoint = self._endpoints[self.GET_USER].format(id=user_id)
+            graph_api_url = self.build_url(user_fetch_endpoint)
+        elif user_principal_name:
+            # Build endpoint and URL
+            user_fetch_endpoint = self._endpoints[self.GET_USER].format(id=user_principal_name)
+            graph_api_url = self.build_url(user_fetch_endpoint)
+        
+        # Make API call
+        response = self.graph_connector.delete(graph_api_url)
+        if not response.status_code == HTTPStatus.NO_CONTENT: # Checking for 200
+            logger.error('Error when getting user from Graph API')
+            logger.error(response.content)
+            return False
+        
+        return True

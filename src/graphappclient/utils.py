@@ -72,6 +72,10 @@ class Paginator(APIBase):
         iteration, and will automatically fetch each page if iterated over like
         a list
         """
+
+        # Super class constructor
+        super().__init__()
+        
         self.graph_connector = api_connector
         self.page = data
         self.idx = 0
