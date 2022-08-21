@@ -7,10 +7,12 @@ This project is primarily developed and maintained by [eshifflett](https://githu
 ```python
 from graphappclient.graphclient import GraphAppClient
 
+# These will need to contain actual values
 CLIENT_ID = '<Client ID>'
 TENANT_ID = '<Tenant ID>'
 CLIENT_SECRET = '<Client Secret>'
 
+# Create client and authenticate
 client = GraphAppClient(CLIENT_ID, TENANT_ID, CLIENT_SECRET)
 client.authenticate()
 
@@ -65,4 +67,30 @@ Finally, this function is used to delete Users from their Microsoft organization
 The `Paginator` class is a custom data structure that is used for storying results of queries that return more than one page of data. Various functions in this library have `page_size` parameters, and the Graph API also has some default page size maximums for some of their queries. This data structure is iterable and will continuously request data as the previous page runs out until no more data is sent from Microsoft. In addition to iterating over the whole collection, you can also access the `page` attribute of the object itself to just get the current page as a `List`, and call `Paginator.next_page()` to receive the next page of data from Microsoft.
 #### Code Example
 ```python
+from graphappclient.graphclient import GraphAppClient
+
+# These will need to contain actual values
+CLIENT_ID = '<Client ID>'
+TENANT_ID = '<Tenant ID>'
+CLIENT_SECRET = '<Client Secret>'
+
+# Create client and authenticate
+client = GraphAppClient(CLIENT_ID, TENANT_ID, CLIENT_SECRET)
+client.authenticate()
+
+# Iterating directly
+# Get 100 users, page_size = 20, will come as a Paginator in 5 pages
+users = client.get_users(page_size=20, limit=100)
+for user in users: # Will print all 100 users, automatically requests more every 20
+  print(user)
+
+# Iterating page by page
+# Get 100 users, page_size = 20, will come as a Paginator in 5 pages
+users = client.get_users(page_size=20, limit=100)
+for user in users.page # Iterate over first page, 20 Users
+  print(user)
+
+users.next_page() # Requests next page of data from Microsoft and updates data structure
+for user in users.page # Iterate over second page, 20 more users
+  print(user)
 ```
