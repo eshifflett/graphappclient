@@ -1,2 +1,2 @@
-# graphappclient - Backend Microsoft Graph API App Client
+# graphappclient - A Backend Microsoft Graph API Application Client
 After a work project involving using the Graph API via Python, I found that there wasn't great library support for interaction with the Graph API, [specifically when developing applications that authenticate with their own identity.](https://docs.microsoft.com/en-us/graph/auth-v2-service) This library aims to provide simple, Pythonic support for interaction with Microsoft's Graph API components in this authentication case.
