@@ -30,7 +30,7 @@ selected_user.delete_user()
 ```
 
 ## Authentication and Permissions
-Before interaction with the Microsoft Graph API can be done with this library, an initial setup must be performed by an administrator of your Microsoft Organization. For more details about the authentication process and requesting the necessary permissions to perform your wanted actions, [view our documentation on the process here]().
+Before interaction with the Microsoft Graph API can be done with this library, an initial setup must be performed by an administrator of your Microsoft Organization. For more details about the authentication process and requesting the necessary permissions to perform your wanted actions, [view our documentation on the process here](https://github.com/eshifflett/graphappclient/blob/main/resources/AUTHENTICATION_PERMISSIONS.md).
 
 ## Graph API Components
 ### Users
