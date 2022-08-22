@@ -20,3 +20,14 @@ In order to authenticate with Microsoft, an administrator in the Microsoft organ
 8. The page will display your new **Client Secret** value. **Be sure to copy this value now, as you can see, once leaving this page it will no longer be visible to any user:**
 ![secret](secret.png)
 9. You now have all three required values for authentication.
+
+## Permissions
+In addition to authenticating, the Graph API endpoints leveraged in this library all also have their own required Microsoft permissions. More detail about which permissions exactly are required for which functions are found in the library documentation, but this is how to add each permission to the application registration:
+1. Navigate to the application registration in the [Microsoft Azure Portal](https://azure.microsoft.com/en-us/get-started/azure-portal/)
+2. Go to 'API permissions' on the menu on the left
+3. Select 'Add a permission'
+4. From the new menu, select 'Microsoft Graph' and then 'Application permissions'
+5. Search for and select the desired permissions
+6. When all the permissions are selected, click on 'Grant admin consent' next to 'Add a permission'
+7. All selected permissions should be granted
+![permissions](permissions.png)
