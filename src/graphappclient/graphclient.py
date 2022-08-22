@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 class GraphAppClient(APIBase):
 
+    """
+    This class will be the starting point for all interaction with the Graph
+    API.
+
+    Attributes
+        graph_connector(APIConnector): Manages access tokens and
+            makes API calls
+    """
+
     GET_USERS = 'get_users'
     GET_USER = 'get_user'
     CREATE_USER = 'create_user'
@@ -30,12 +39,12 @@ class GraphAppClient(APIBase):
         authenticate with Microsoft at initialization)
 
         Parameters
-        client_id : str
-            Client ID of application registered in Azure
-        tenant_id : str
-            Tenant ID of application registered in Azure
-        client_secret : str
-            Client secret value of application registered in Azure
+            client_id : str
+                Client ID of application registered in Azure
+            tenant_id : str
+                Tenant ID of application registered in Azure
+            client_secret : str
+                Client secret value of application registered in Azure
         """
         # Super class constructor
         super().__init__()
@@ -56,20 +65,30 @@ class GraphAppClient(APIBase):
         to the Graph API
 
         Returns
-        bool
-            Boolean indicating the success of the authentication operation
+            bool:
+                Boolean indicating the success of the authentication operation
         """
         logger.info('Attempting to authenticate...')
 
         return self.graph_connector.authenticate()
     
-    def get_users(self, page_size: int = None, limit: int = None) -> Union[List[User], Paginator, None]:
+    def get_users(
+        self,
+        page_size: Optional[int] = None,
+        limit: Optional[int] = None
+    ) -> Union[List[User], Paginator, None]:
         """
         Gets and returns a list of User objects in the Microsoft organization
 
+        Parameters
+            page_size : Optional[int]
+                Size of each page of data to be returned from Microsoft API calls
+            limit : Optional[int]
+                Limit on how much data is returned from Microsoft
+
         Returns
-        Union[List[user.User], None]
-            A list of User objects if found, otherwise None
+            Union[List[User], Paginator, None]:
+                A list or Pagination of User objects if found, otherwise None
         """
         # Get endpoint URL
         graph_api_url = self.build_url(self._endpoints[self.GET_USERS])
@@ -111,27 +130,30 @@ class GraphAppClient(APIBase):
             )
             return user_paginator
     
-    def get_user(self, user_id: Optional[str] = None,
-                    user_principal_name: Optional[str] = None) -> Union[User, None]:
+    def get_user(
+        self,
+        user_id: Optional[str] = None,
+        user_principal_name: Optional[str] = None
+    ) -> Union[User, None]:
         """
         Gets user either via user ID or principal name. It will prioritize
         fetching via ID if both are provided.
 
         Parameters
-        user_id : Optional[str]
-            User ID to fetch user from. If not provided, the principal name
-            is used instead
-        user_principal_name : Optional[str]
-            e.g. login username, another way to fetch users. Will be used only
-            if user_id is not provided
+            user_id : Optional[str]
+                User ID to fetch user from. If not provided, the principal name
+                is used instead
+            user_principal_name : Optional[str]
+                e.g. login username, another way to fetch users. Will be used only
+                if user_id is not provided
         
         Returns
-        Union[User, None]
-            A User object if the user is found, None otherwise.
+            Union[User, None]:
+                A User object if the user is found, None otherwise.
         
         Raises
-        ValueError
-            Raises this error if neither argument is provided
+            ValueError:
+                Raises this error if neither argument is provided
         """
 
         if user_id:
@@ -163,33 +185,33 @@ class GraphAppClient(APIBase):
         Creates a user in the Microsoft organization
 
         Parameters
-        user_data : dict
-            dictionary representing user data to be POST'd to Microsoft. The
-            required fields can be found in the example below
+            user_data : dict
+                dictionary representing user data to be POST'd to Microsoft. The
+                required fields can be found in the example below
         
         Returns
-        Union[User, None]
-            Returns a User object representing the new User created, or None if
-            the User could not be created
+            Union[User, None]:
+                Returns a User object representing the new User created, or None if
+                the User could not be created
         
         Raises
-        ValueError
-            Raises if required fields aren't all present in user_data
+            ValueError:
+                Raises if required fields aren't all present in user_data
         
         Usage
-        example dictionary with required fields:
-        {
-            "accountEnabled": true,
-            "displayName": "Adele Vance",
-            "mailNickname": "AdeleV",
-            "userPrincipalName": "AdeleV@contoso.onmicrosoft.com",
-            "passwordProfile" : {
-                "forceChangePasswordNextSignIn": true,
-                "password": "xWwvJ]6NMw+bWH-d"
+            example dictionary with required fields:
+            {
+                "accountEnabled": true,
+                "displayName": "Adele Vance",
+                "mailNickname": "AdeleV",
+                "userPrincipalName": "AdeleV@contoso.onmicrosoft.com",
+                "passwordProfile" : {
+                    "forceChangePasswordNextSignIn": true,
+                    "password": "xWwvJ]6NMw+bWH-d"
+                }
             }
-        }
-        Additional information can be found in the Graph API docs for Users
-        and Create User, as well as our documentation
+            Additional information can be found in the Graph API docs for Users
+            and Create User, as well as our documentation
         """
 
         # Checking if required data is in provided JSON for POST

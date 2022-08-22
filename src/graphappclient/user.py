@@ -16,6 +16,22 @@ class User(APIBase):
     """
     Class representing a user object for Microsoft. More info found here:
     https://docs.microsoft.com/en-us/graph/api/resources/user
+
+    Attributes
+        graph_connector(APIConnector): Manages access tokens and
+            makes API calls
+        business_phones(str): List of business phone numbers
+        display_name(str): User's MS display name
+        given_name(str): User's MS given name
+        job_title(str): User's MS job title
+        mail(str): User's MS email address
+        mobile_phone(str): User's MS mobile phone number
+        office_location(str): User's MS office location
+        preferred_location(str): User's MS preferred language
+        surname(str): User's MS provided surname
+        user_principal_name(str): User's login name
+        id(str): User's unique Microsoft ID
+        user_json(dict): JSON representation of the User object
     """
 
     DELETE_USER = 'delete_user'
@@ -28,6 +44,13 @@ class User(APIBase):
 
     def __init__(self, api_connector: APIConnector, user_json: dict):
         """
+        Initializes a User object.
+
+        Parameters
+            api_connector(APIConnector): Object used for managing authentication and
+                API calls
+            user_json(dict): Representation of User JSON object to be used in
+                construction of object
         """
 
         # Super class constructor
@@ -51,6 +74,14 @@ class User(APIBase):
         return f'User {self.user_principal_name} with ID {self.id}'
     
     def delete_user(self) -> bool:
+        """
+        Deletes this user from the Microsoft organization. USE THIS ENDPOINT AT
+        YOUR OWN PERIL!
+
+        Returns
+            bool:
+                Indicates the success of the operation
+        """
         # Build endpoint and URL
         user_fetch_endpoint = self._endpoints[self.DELETE_USER].format(id=self.id)
         graph_api_url = self.build_url(user_fetch_endpoint)
@@ -65,7 +96,25 @@ class User(APIBase):
         return True
     
     def update_user(self, updates: Optional[dict] = None, include_attributes: Optional[bool] = False) -> bool:
-        """"""
+        """
+        Updates this user in Microsoft. Updates can be provided one of two ways,
+        either the attributes of the class object can be edited and then call
+        this function with include_attributes set to True, or provide a dict
+        updates with Key/Value pairs matching attributes of the User object in
+        the Graph API. More info on that can be found here:
+        https://docs.microsoft.com/en-us/graph/api/user-update?view=graph-rest-1.0&tabs=http#request-body
+        Both options can be done simultaneously.
+
+        Parameters
+            updates(Optional[dict]): dict representing JSON that would be sent
+                in request body of Graph API call
+            include_attributes(Optional[bool]): Indicates whether or not to
+                include attribute changes of this User object in the update
+        
+        Returns
+            bool:
+                Indicates the success of the operation
+        """
 
         # Input validation
         if updates == None and not include_attributes:
