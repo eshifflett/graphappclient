@@ -12,6 +12,9 @@ class APIBase:
     """
     Base class for all classes that have API calls, will include functions that
     are useful to all such classes, such as building a URL for API calls
+
+    Attributes
+        base_url(str): Base URL for Graph API calls
     """
 
     def __init__(self):
@@ -31,14 +34,14 @@ class APIBase:
         Builds the base URL for calls to the Graph API
 
         Parameters
-        url : str
-            Base url for Graph API
-        ver : str
-            Version of Graph API to be used
+            url : str
+                Base url for Graph API
+            ver : str
+                Version of Graph API to be used
 
         Returns
-        str
-            String representation of base URL for Graph API calls
+            str:
+                String representation of base URL for Graph API calls
         """
         return f'{url}{ver}'
     
@@ -47,18 +50,31 @@ class APIBase:
         Builds URL for Graph API call
 
         Parameters
-        endpoint : str
-            Endpoint being called
+            endpoint : str
+                Endpoint being called
 
         Returns
-        str
-            String representation of the url for API call
+            str:
+                String representation of the url for API call
         """
         return f'{self.base_url}{endpoint}'
 
 
 class Paginator(APIBase):
-    """"""
+    """
+    Custom data structure used to support pagination of data from Graph API
+    request responses. It's iterable, so you can iterate over the whole
+    collection of returned data Pythonically and it will request more data
+    as the current page runs out. You can also access pages individually and
+    call get_next_page() to manually manage pages.
+
+    Attributes
+        graph_connector(APIConnector): Manages access tokens and makes API calls
+        page(List): Current page of data returned
+        next_page_url(str): URL to GET for next page of data
+        constructor(Any): Constructor to create objects from MS data
+        limit(int): Max total data entries to be returned
+    """
     def __init__(
         self,
         api_connector: APIConnector,
@@ -71,6 +87,18 @@ class Paginator(APIBase):
         Initializes Paginator object. This is a data structure that supports
         iteration, and will automatically fetch each page if iterated over like
         a list
+
+        Parameters
+            api_connector : APIConnector
+                Manages access tokens and makes API calls
+            data : List
+                First page of data
+            next_page_url : str
+                URL to GET for next page of data
+            constructor : Any
+                Constructor to create objects from MS data
+            limit : int
+                Max total data entries to be returned
         """
 
         # Super class constructor
@@ -78,7 +106,7 @@ class Paginator(APIBase):
         
         self.graph_connector = api_connector
         self.page = data
-        self.idx = 0
+        self._idx = 0
         self.next_page_url = next_page_url
         self.constructor = constructor
         self.limit = limit
@@ -93,9 +121,9 @@ class Paginator(APIBase):
     
     def __next__(self):
         # Checking if we can just index data
-        if self.idx < self.curr_data_count:
-            val = self.page[self.idx]
-            self.idx += 1
+        if self._idx < self.curr_data_count:
+            val = self.page[self._idx]
+            self._idx += 1
             return val
         elif self.limit and self.limit <= self.total_data_count:
             raise StopIteration()
@@ -138,14 +166,22 @@ class Paginator(APIBase):
         if returned_list_count > 0: # cleanup and returning value
             self.curr_data_count = returned_list_count
             self.total_data_count += returned_list_count
-            self.idx = 0
-            val = self.page[self.idx]
-            self.idx += 1
+            self._idx = 0
+            val = self.page[self._idx]
+            self._idx += 1
             return val
         else:
             raise StopIteration()
     
     def next_page(self) -> bool:
+        """
+        Gets the next page of data requested from Microsoft. This will set the
+        page attribute to the next list of data
+
+        Returns:
+            bool:
+                Indicates the success of the operation
+        """
         if self.next_page_url == None: # No more pages to get
             return False
         
@@ -183,7 +219,7 @@ class Paginator(APIBase):
         if returned_list_count > 0: # cleanup and returning value
             self.curr_data_count = returned_list_count
             self.total_data_count += returned_list_count
-            self.idx = 0
+            self._idx = 0
             return True
         else:
             return False

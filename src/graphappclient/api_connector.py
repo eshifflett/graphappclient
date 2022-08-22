@@ -9,6 +9,16 @@ logger = logging.getLogger(__name__)
 
 class APIConnector:
 
+    """
+    This class is the main connection to the Graph API. It both makes all of the
+    API calls and manages the access tokens with the crendentials provided from
+    Microsoft.
+
+    Attributes
+        msal_app(ConfidentialClientApplication): The MSAL object that is used
+            to get and manage auth tokens with the Graph API
+    """
+
     def __init__(self, client_id: str, tenant_id: str, client_secret: str):
         """
         Initializes an APIConnector object. This class will handle managing
