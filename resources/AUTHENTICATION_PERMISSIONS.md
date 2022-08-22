@@ -13,6 +13,10 @@ In order to authenticate with Microsoft, an administrator in the Microsoft organ
 3. Go to 'New registration'
 4. Give your registration a name, and select the appropriate supported account types (the default selection is fine if you're unsure)
    * With this authentication type, the redirect URI is not required
-5. Click on 'Register'. This will take you to the overview page of your registration, where you can see the **Client ID** and **Tenant ID** values you need:
-
-6. 
+5. Select 'Register'. This will take you to the overview page of your registration, where you can see the **Client ID** and **Tenant ID** values you need:
+![creds](creds.png)
+6. Go to 'Certificates & secrets' on the menu on the left
+7. Select 'New client secret', give it a name and lifespan (maximum of 2 years), and select 'Add'
+8. The page will display your new **Client Secret** value. **Be sure to copy this value now, as you can see, once leaving this page it will no longer be visible to any user:**
+![secret](secret.png)
+9. You now have all three required values for authentication.
