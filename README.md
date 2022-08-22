@@ -29,6 +29,9 @@ selected_user.update_user(updates=updates, include_attributes=True)
 selected_user.delete_user()
 ```
 
+## Authentication and Permissions
+Before interaction with the Microsoft Graph API can be done with this library, an initial setup must be performed by an administrator of your Microsoft Organization. For more details about the authentication process and requesting the necessary permissions to perform your wanted actions, [view our documentation on the process here]().
+
 ## Graph API Components
 ### Users
 Users are accessed and interacted with via the `GraphAppClient` and `User` classes.
