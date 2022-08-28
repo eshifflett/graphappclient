@@ -2,7 +2,7 @@ from graphappclient.api_connector import APIConnector
 from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
                                     JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
                                     PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
-                                    VALUE, NEXT_ODATA, TOP_QUERY_STRING)
+                                    VALUE, NEXT_ODATA, TOP_QUERY, DEFAULT_USER_SELECT)
 from graphappclient.user import User
 from graphappclient.utils import APIBase, Paginator
 from http import HTTPStatus
@@ -75,7 +75,8 @@ class GraphAppClient(APIBase):
     def get_users(
         self,
         page_size: Optional[int] = None,
-        limit: Optional[int] = None
+        limit: Optional[int] = None,
+        select: Optional[List[str]] = None
     ) -> Union[List[User], Paginator, None]:
         """
         Gets and returns a list of User objects in the Microsoft organization
@@ -95,7 +96,18 @@ class GraphAppClient(APIBase):
 
         # Checking for page size request
         if page_size != None:
-            graph_api_url = f'{graph_api_url}?{TOP_QUERY_STRING}{page_size.__str__()}'
+            graph_api_url = f'{graph_api_url}?{TOP_QUERY}{page_size.__str__()}'
+        
+        # Checking for select parameters
+        if select != None:
+            select_query = DEFAULT_USER_SELECT
+            for query in select:
+                select_query = f'{select_query},{query}'
+            
+            if page_size != None:
+                graph_api_url = f'{graph_api_url}&{select_query}'
+            else:
+                graph_api_url = f'{graph_api_url}?{select_query}'
 
         # Make API call
         response = self.graph_connector.get(graph_api_url)
@@ -139,7 +151,8 @@ class GraphAppClient(APIBase):
     def get_user(
         self,
         user_id: Optional[str] = None,
-        user_principal_name: Optional[str] = None
+        user_principal_name: Optional[str] = None,
+        select: Optional[List[str]] = None
     ) -> Union[User, None]:
         """
         Gets user either via user ID or principal name. It will prioritize
@@ -173,6 +186,14 @@ class GraphAppClient(APIBase):
         else:
             raise ValueError('Either a user_id or a user_principal_name must'
                                 + ' be provided.')
+        
+        # Checking for select parameters
+        if select != None:
+            select_query = DEFAULT_USER_SELECT
+            for query in select:
+                select_query = f'{select_query},{query}'
+            
+            graph_api_url = f'{graph_api_url}?{select_query}'
 
         # Make API call
         response = self.graph_connector.get(graph_api_url)
