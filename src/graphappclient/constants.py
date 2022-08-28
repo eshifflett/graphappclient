@@ -9,7 +9,8 @@ API_VERSION = 'v1.0'
 DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 
 # Query Param Strings
-TOP_QUERY_STRING = '$top='
+TOP_QUERY = '$top='
+DEFAULT_USER_SELECT = '$select=businessPhones,displayName,givenName,jobTitle,mail,mobilePhone,officeLocation,preferredLanguage,surname,userPrincipalName,id'
 
 # Misc dict keys
 ERROR = 'error'
