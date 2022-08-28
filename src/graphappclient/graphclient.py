@@ -2,7 +2,7 @@ from graphappclient.api_connector import APIConnector
 from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
                                     JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
                                     PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
-                                    VALUE, NEXT_ODATA)
+                                    VALUE, NEXT_ODATA, TOP_QUERY_STRING)
 from graphappclient.user import User
 from graphappclient.utils import APIBase, Paginator
 from http import HTTPStatus
@@ -95,7 +95,7 @@ class GraphAppClient(APIBase):
 
         # Checking for page size request
         if page_size != None:
-            graph_api_url = f'{graph_api_url}?$top={page_size.__str__()}'
+            graph_api_url = f'{graph_api_url}?{TOP_QUERY_STRING}{page_size.__str__()}'
 
         # Make API call
         response = self.graph_connector.get(graph_api_url)

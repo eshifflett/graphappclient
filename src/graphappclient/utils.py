@@ -190,7 +190,7 @@ class Paginator(APIBase):
         if not response.status_code == HTTPStatus.OK: # Checking for 200
             logger.error('Error when getting next page from Graph API')
             logger.error(response.content)
-            raise StopIteration()
+            return False
         
         # Get JSON
         response_data = response.json()

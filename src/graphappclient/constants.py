@@ -8,6 +8,9 @@ API_VERSION = 'v1.0'
 # Default scope required for application permissions
 DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 
+# Query Param Strings
+TOP_QUERY_STRING = '$top='
+
 # Misc dict keys
 ERROR = 'error'
 ACCESS_TOKEN = 'access_token'
