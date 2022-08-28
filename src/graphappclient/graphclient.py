@@ -151,7 +151,8 @@ class GraphAppClient(APIBase):
     def get_user(
         self,
         user_id: Optional[str] = None,
-        user_principal_name: Optional[str] = None
+        user_principal_name: Optional[str] = None,
+        select: Optional[List[str]] = None
     ) -> Union[User, None]:
         """
         Gets user either via user ID or principal name. It will prioritize
@@ -185,6 +186,14 @@ class GraphAppClient(APIBase):
         else:
             raise ValueError('Either a user_id or a user_principal_name must'
                                 + ' be provided.')
+        
+        # Checking for select parameters
+        if select != None:
+            select_query = DEFAULT_USER_SELECT
+            for query in select:
+                select_query = f'{select_query},{query}'
+            
+            graph_api_url = f'{graph_api_url}?{select_query}'
 
         # Make API call
         response = self.graph_connector.get(graph_api_url)
