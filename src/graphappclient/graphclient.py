@@ -112,7 +112,7 @@ class GraphAppClient(APIBase):
 
         # Checking limit
         limit_reached = False
-        if len(user_json_list) > limit:
+        if limit and len(user_json_list) > limit:
             user_json_list = user_json_list[:limit]
             limit_reached = True
 
