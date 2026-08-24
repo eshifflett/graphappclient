@@ -8,17 +8,20 @@ API_VERSION = 'v1.0'
 # Default scope required for application permissions
 DEFAULT_SCOPE = ['https://graph.microsoft.com/.default']
 
-# Query Param Strings
-TOP_QUERY = '$top='
-DEFAULT_USER_SELECT = '$select=businessPhones,displayName,givenName,jobTitle,mail,mobilePhone,officeLocation,preferredLanguage,surname,userPrincipalName,id'
-
 # Misc dict keys
 ERROR = 'error'
 ACCESS_TOKEN = 'access_token'
 VALUE = 'value'
 NEXT_ODATA = '@odata.nextLink'
 
-# Default User dict keys
+# Query Param Strings
+TOP_QUERY = '$top='
+
+
+
+################################################################################
+# USER OBJECT CONSTANTS
+################################################################################
 BUSINESS_PHONES = 'businessPhones'
 DISPLAY_NAME = 'displayName'
 GIVEN_NAME = 'givenName'
@@ -29,4 +32,5 @@ OFFICE_LOCATION = 'officeLocation'
 PREFERRED_LANGUAGE = 'preferredLanguage'
 SURNAME = 'surname'
 USER_PRINCIPAL_NAME = 'userPrincipalName'
-ID = 'id'
+USER_ID = 'id'
+DEFAULT_USER_SELECT = f'$select={BUSINESS_PHONES},{DISPLAY_NAME},{GIVEN_NAME},{JOB_TITLE},{MAIL},{MOBILE_PHONE},{OFFICE_LOCATION},{PREFERRED_LANGUAGE},{SURNAME},{USER_PRINCIPAL_NAME},{USER_ID}'
