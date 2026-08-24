@@ -1,8 +1,5 @@
 from graphappclient.api_connector import APIConnector
-from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
-                                    JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
-                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
-                                    VALUE, NEXT_ODATA, TOP_QUERY, DEFAULT_USER_SELECT)
+from graphappclient.constants import (VALUE, NEXT_ODATA, TOP_QUERY, DEFAULT_USER_SELECT)
 from graphappclient.user import User
 from graphappclient.utils import APIBase, Paginator
 from http import HTTPStatus

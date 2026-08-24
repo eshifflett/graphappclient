@@ -1,9 +1,8 @@
 from unittest.mock import patch
 from graphappclient.api_connector import APIConnector
-from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, ID,
+from graphappclient.constants import (BUSINESS_PHONES, DISPLAY_NAME, GIVEN_NAME, USER_ID,
                                     JOB_TITLE, MAIL, MOBILE_PHONE, OFFICE_LOCATION,
-                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME,
-                                    VALUE)
+                                    PREFERRED_LANGUAGE, SURNAME, USER_PRINCIPAL_NAME)
 from graphappclient.utils import APIBase
 from http import HTTPStatus
 import logging
@@ -67,7 +66,7 @@ class User(APIBase):
         self.preferred_language = user_json.get(PREFERRED_LANGUAGE)
         self.surname = user_json.get(SURNAME)
         self.user_principal_name = user_json.get(USER_PRINCIPAL_NAME)
-        self.id = user_json.get(ID)
+        self.id = user_json.get(USER_ID)
         self.user_json = user_json
     
     def __repr__(self):
@@ -138,7 +137,7 @@ class User(APIBase):
             self.user_json[PREFERRED_LANGUAGE] = self.preferred_language
             self.user_json[SURNAME] = self.surname
             self.user_json[USER_PRINCIPAL_NAME] = self.user_principal_name
-            self.user_json[ID] = self.id
+            self.user_json[USER_ID] = self.id
         
         # Getting JSON to patch to MS
         patch_json = self.user_json if include_attributes else updates
