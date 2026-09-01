@@ -1,5 +1,8 @@
 .venv
 venv
+.eggs/
 graphappclient.egg-info
 src/devtesting.py
 src/graphappclient/__pycache__
+tests/integration/__pycache__
+tests/unit/__pycache__

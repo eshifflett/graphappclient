@@ -15,7 +15,8 @@ requires = [
 setup(
     name='graphappclient',
     version=VERSION,
-    packages=find_packages(),
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     url='https://github.com/eshifflett/GraphAppClient',
     license='Apache License 2.0',
     author='eshifflett',
