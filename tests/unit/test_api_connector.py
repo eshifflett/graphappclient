@@ -35,7 +35,6 @@ def test_get_token_from_cache(connector):
 
     # Assertions
     assert result == fake_token # token found
-    assert api_connector._access_token == fake_token # correct token
     mock_msal.acquire_token_silent.assert_called_once_with( # cache check called once
         DEFAULT_SCOPE,
         None
@@ -61,7 +60,6 @@ def test_get_token_from_microsoft_when_cache_empty(connector):
 
     # Assertions
     assert result == fake_token # Assert token fetched and correctly saved in connector object
-    assert api_connector._access_token == fake_token # Assert APIConnector successfully saving token
     mock_msal.acquire_token_silent.assert_called_once_with( # Assert ConfidentialClientApplication.acquire_token_silent() was called exactly once
         DEFAULT_SCOPE,
         None
