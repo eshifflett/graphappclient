@@ -40,8 +40,6 @@ class APIConnector:
             client_credential=client_secret
         )
 
-        self._access_token = None
-
     def authenticate(self) -> bool:
         """
         Authenticates the GraphAppClient with Microsoft in order to make calls
@@ -55,7 +53,6 @@ class APIConnector:
 
         tok = None
         tok = self._get_token()
-        self._access_token = tok
         return False if tok == None else True
     
     def _get_token(self) -> str:
@@ -74,7 +71,6 @@ class APIConnector:
             if res and ERROR in res:
                 logger.error(res[ERROR])
         else:
-            self._access_token = res[ACCESS_TOKEN]
             return res[ACCESS_TOKEN]
         
         # Fetching auth token from Microsoft
@@ -88,7 +84,6 @@ class APIConnector:
             if res and ERROR in res:
                 logger.error(res[ERROR])
         else:
-            self._access_token = res[ACCESS_TOKEN]
             return res[ACCESS_TOKEN]
         
         return None # No token found
